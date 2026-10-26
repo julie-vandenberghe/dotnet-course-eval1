@@ -5,12 +5,14 @@ namespace VotePreferentiel.Worker;
 public class Worker : BackgroundService
 {
     private readonly VoteProvider _provider;
+    private readonly IVoteCounter _voteCounter;
     private readonly IConfiguration _configuration;
     private readonly IHostApplicationLifetime _lifetime;
 
-    public Worker(VoteProvider provider, IConfiguration configuration, IHostApplicationLifetime lifetime)
+    public Worker(VoteProvider provider, IVoteCounter voteCounter, IConfiguration configuration, IHostApplicationLifetime lifetime)
     {
         _provider = provider;
+        _voteCounter = voteCounter;
         _configuration = configuration;
         _lifetime = lifetime;
     }
@@ -21,7 +23,9 @@ public class Worker : BackgroundService
                   ?? throw new InvalidOperationException("VoteSettings:Url manquant dans appsettings.json");
 
         var votes = await _provider.GetVotesAsync(url, stoppingToken);
-        Console.WriteLine($"{votes.Votes.Count} bulletins récupérés");
+        var winner = _voteCounter.GetWinner(votes);
+
+        Console.WriteLine($"Le gagnant est : {winner}");
         _lifetime.StopApplication();
     }
 }
