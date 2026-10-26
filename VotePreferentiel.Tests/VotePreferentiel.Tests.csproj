@@ -11,4 +11,8 @@
     <PackageReference Include="TUnit" Version="1.7*" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\VotePreferentiel\VotePreferentiel.csproj" />
+  </ItemGroup>
+
 </Project>
